@@ -29,7 +29,7 @@ func (sc *signupController) Signup(ctx *gin.Context) (bool, error) {
 	err := ctx.ShouldBind(&user)
 	if err != nil {
 		fmt.Println(err)
-		return false, fmt.Errorf("No Data found")
+		return false, fmt.Errorf("Invalid or incorrect data")
 	}
 
 	return sc.signupService.Signup(user), nil
