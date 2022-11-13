@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"jwt-auth/main/src/controller"
 	"jwt-auth/main/src/service"
 	"net/http"
@@ -47,7 +46,6 @@ func signUpHandler(signupController controller.SignupController) gin.HandlerFunc
 	return func(ctx *gin.Context) {
 		isUserCreated, err := signupController.Signup(ctx)
 		if err == nil && isUserCreated {
-			fmt.Println(service.Users)
 			ctx.JSON(http.StatusOK, gin.H{
 				"message": "User Created Successfully",
 			})

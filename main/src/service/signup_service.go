@@ -1,6 +1,7 @@
 package service
 
 import (
+	"jwt-auth/main/src/data"
 	"jwt-auth/main/src/dto"
 	"log"
 
@@ -29,7 +30,7 @@ func (info *signupInformation) Signup(user dto.User) bool {
 			Password: hashedPass,
 		}
 
-		Users = append(Users, newUser)
+		data.Users = append(data.Users, newUser)
 		return true
 	}
 

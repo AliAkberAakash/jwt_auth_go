@@ -1,6 +1,9 @@
 package service
 
-import "jwt-auth/main/src/dto"
+import (
+	"jwt-auth/main/src/data"
+	"jwt-auth/main/src/dto"
+)
 
 type UserService interface {
 	GetAllUser() []dto.User
@@ -12,7 +15,7 @@ type userService struct {
 
 func NewUserService() UserService {
 	return &userService{
-		users: Users,
+		users: data.Users,
 	}
 }
 
