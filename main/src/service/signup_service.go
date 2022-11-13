@@ -20,21 +20,16 @@ func StaticSignupService() SignupService {
 }
 
 func (info *signupInformation) Signup(user dto.User) bool {
-	valid := len(user.Email) > 0 && len(user.Password) > 8
 
-	if valid {
-		hashedPass := getHash([]byte(user.Password))
+	hashedPass := getHash([]byte(user.Password))
 
-		newUser := dto.User{
-			Email:    user.Email,
-			Password: hashedPass,
-		}
-
-		data.Users = append(data.Users, newUser)
-		return true
+	newUser := dto.User{
+		Email:    user.Email,
+		Password: hashedPass,
 	}
 
-	return false
+	data.Users = append(data.Users, newUser)
+	return true
 }
 
 func getHash(pwd []byte) string {

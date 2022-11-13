@@ -2,8 +2,10 @@ package controller
 
 import (
 	"fmt"
+	"jwt-auth/main/src/data"
 	"jwt-auth/main/src/dto"
 	"jwt-auth/main/src/service"
+	"jwt-auth/main/src/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +32,21 @@ func (sc *signupController) Signup(ctx *gin.Context) (bool, error) {
 	if err != nil {
 		fmt.Println(err)
 		return false, fmt.Errorf("Invalid or incorrect data")
+	}
+
+	valid := len(user.Email) > 0 && len(user.Password) > 8
+
+	if !valid {
+		return false, fmt.Errorf("Invalid or incorrect data")
+	}
+
+	if len(data.Users) != 0 {
+		foundUser, err := util.GetUserFromDB(user.Email)
+
+		if err == nil {
+			return false,
+				fmt.Errorf("User with email %s already exists", foundUser.Email)
+		}
 	}
 
 	return sc.signupService.Signup(user), nil
