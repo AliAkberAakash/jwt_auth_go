@@ -1,21 +1,58 @@
 package service
 
+import (
+	"fmt"
+	"jwt-auth/main/src/dto"
+	"log"
+
+	"golang.org/x/crypto/bcrypt"
+)
+
 type LoginService interface {
-	IsUserValid(email string, password string) bool
+	IsUserValid(user dto.User) bool
 }
 
-type loginInformation struct {
-	email    string
-	password string
-}
+type loginService struct{}
 
 func StaticLoginService() LoginService {
-	return &loginInformation{
-		email:    "ali.akber@brainstation-23.com",
-		password: "Pass.1234#",
-	}
+	return &loginService{}
 }
 
-func (info *loginInformation) IsUserValid(email string, password string) bool {
-	return info.email == email && info.password == password
+func (info *loginService) IsUserValid(user dto.User) bool {
+
+	currentUser := dto.User{
+		Email:    user.Email,
+		Password: user.Password,
+	}
+
+	foundUser, err := getUserFromDB(currentUser)
+
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+
+	passErr := bcrypt.CompareHashAndPassword(
+		[]byte(foundUser.Password),
+		[]byte(user.Password),
+	)
+	if passErr != nil {
+		log.Println(passErr)
+		return false
+	}
+	return true
+}
+
+func getUserFromDB(currentUser dto.User) (dto.User, error) {
+
+	var foundUser dto.User
+
+	for _, u := range Users {
+		if u.Email == currentUser.Email {
+			foundUser = u
+			return foundUser, nil
+		}
+	}
+
+	return foundUser, fmt.Errorf("User not Found")
 }
