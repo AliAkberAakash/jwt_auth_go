@@ -28,17 +28,17 @@ func NewLoginController(
 }
 
 func (controller *loginController) Login(ctx *gin.Context) string {
-	var currentUser dto.User
-	err := ctx.ShouldBind(&currentUser)
+	var loginRequest dto.LoginRequest
+	err := ctx.ShouldBind(&loginRequest)
 
 	if err != nil {
 		fmt.Println(err)
 		return "no data found"
 	}
 
-	isUserAuthenticated := controller.LoginService.IsUserValid(currentUser)
+	isUserAuthenticated := controller.LoginService.IsUserValid(loginRequest)
 	if isUserAuthenticated {
-		return controller.JwtService.GenerateToken(currentUser.Email, true)
+		return controller.JwtService.GenerateToken(loginRequest.Email, true)
 	}
 	return ""
 }

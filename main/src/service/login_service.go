@@ -9,7 +9,7 @@ import (
 )
 
 type LoginService interface {
-	IsUserValid(user dto.User) bool
+	IsUserValid(loginRequest dto.LoginRequest) bool
 }
 
 type loginService struct{}
@@ -18,14 +18,9 @@ func StaticLoginService() LoginService {
 	return &loginService{}
 }
 
-func (info *loginService) IsUserValid(user dto.User) bool {
+func (info *loginService) IsUserValid(loginRequest dto.LoginRequest) bool {
 
-	currentUser := dto.User{
-		Email:    user.Email,
-		Password: user.Password,
-	}
-
-	foundUser, err := getUserFromDB(currentUser)
+	foundUser, err := getUserFromDB(loginRequest.Email)
 
 	if err != nil {
 		log.Println(err)
@@ -34,7 +29,7 @@ func (info *loginService) IsUserValid(user dto.User) bool {
 
 	passErr := bcrypt.CompareHashAndPassword(
 		[]byte(foundUser.Password),
-		[]byte(user.Password),
+		[]byte(loginRequest.Password),
 	)
 	if passErr != nil {
 		log.Println(passErr)
@@ -43,12 +38,12 @@ func (info *loginService) IsUserValid(user dto.User) bool {
 	return true
 }
 
-func getUserFromDB(currentUser dto.User) (dto.User, error) {
+func getUserFromDB(email string) (dto.User, error) {
 
 	var foundUser dto.User
 
 	for _, u := range Users {
-		if u.Email == currentUser.Email {
+		if u.Email == email {
 			foundUser = u
 			return foundUser, nil
 		}
