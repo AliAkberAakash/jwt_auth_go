@@ -9,15 +9,15 @@ import (
 
 func LoginHandler(loginController controller.LoginController) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		token := loginController.Login(ctx)
-		if token != "" {
-			ctx.JSON(http.StatusOK, gin.H{
-				"message": "Success",
-				"token":   token,
+		token, err := loginController.Login(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"message": err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Success",
+			ctx.JSON(http.StatusOK, gin.H{
+				"message": "success",
+				"token":   token,
 			})
 		}
 	}
@@ -28,7 +28,7 @@ func SignUpHandler(signupController controller.SignupController) gin.HandlerFunc
 		isUserCreated, err := signupController.Signup(ctx)
 		if err == nil && isUserCreated {
 			ctx.JSON(http.StatusOK, gin.H{
-				"message": "User Created Successfully",
+				"message": "success",
 			})
 		} else {
 			ctx.JSON(http.StatusBadRequest, gin.H{

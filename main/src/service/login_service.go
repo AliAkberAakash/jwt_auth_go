@@ -9,7 +9,7 @@ import (
 )
 
 type LoginService interface {
-	IsUserValid(loginRequest dto.LoginRequest) bool
+	IsUserValid(loginRequest dto.LoginRequest) (bool, error)
 }
 
 type loginService struct{}
@@ -18,13 +18,13 @@ func StaticLoginService() LoginService {
 	return &loginService{}
 }
 
-func (info *loginService) IsUserValid(loginRequest dto.LoginRequest) bool {
+func (info *loginService) IsUserValid(loginRequest dto.LoginRequest) (bool, error) {
 
 	foundUser, err := util.GetUserFromDB(loginRequest.Email)
 
 	if err != nil {
 		log.Println(err)
-		return false
+		return false, err
 	}
 
 	passErr := bcrypt.CompareHashAndPassword(
@@ -33,7 +33,7 @@ func (info *loginService) IsUserValid(loginRequest dto.LoginRequest) bool {
 	)
 	if passErr != nil {
 		log.Println(passErr)
-		return false
+		return false, passErr
 	}
-	return true
+	return true, nil
 }

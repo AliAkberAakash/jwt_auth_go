@@ -17,5 +17,5 @@ func GetUserFromDB(email string) (dto.User, error) {
 		}
 	}
 
-	return foundUser, fmt.Errorf("User not Found")
+	return foundUser, fmt.Errorf("User not found")
 }

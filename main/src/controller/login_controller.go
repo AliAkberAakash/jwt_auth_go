@@ -9,7 +9,7 @@ import (
 )
 
 type LoginController interface {
-	Login(ctx *gin.Context) string
+	Login(ctx *gin.Context) (string, error)
 }
 
 type loginController struct {
@@ -27,18 +27,18 @@ func NewLoginController(
 	}
 }
 
-func (controller *loginController) Login(ctx *gin.Context) string {
+func (controller *loginController) Login(ctx *gin.Context) (string, error) {
 	var loginRequest dto.LoginRequest
 	err := ctx.ShouldBind(&loginRequest)
 
 	if err != nil {
 		fmt.Println(err)
-		return "no data found"
+		return "", err
 	}
 
-	isUserAuthenticated := controller.LoginService.IsUserValid(loginRequest)
-	if isUserAuthenticated {
-		return controller.JwtService.GenerateToken(loginRequest.Email, true)
+	_, err = controller.LoginService.IsUserValid(loginRequest)
+	if err == nil {
+		return controller.JwtService.GenerateToken(loginRequest.Email, true), nil
 	}
-	return ""
+	return "", err
 }
