@@ -17,9 +17,10 @@ type loginController struct {
 	JwtService   service.JWTService
 }
 
-func LoginHandler(
+func NewLoginController(
 	loginService service.LoginService,
-	jwtService service.JWTService) LoginController {
+	jwtService service.JWTService,
+) LoginController {
 	return &loginController{
 		LoginService: loginService,
 		JwtService:   jwtService,
@@ -35,10 +36,9 @@ func (controller *loginController) Login(ctx *gin.Context) string {
 		return "no data found"
 	}
 
-	isUserAuthenticated := controller.LoginService.LoginUser(credentials.Email, credentials.Password)
+	isUserAuthenticated := controller.LoginService.IsUserValid(credentials.Email, credentials.Password)
 	if isUserAuthenticated {
 		return controller.JwtService.GenerateToken(credentials.Email, true)
 	}
 	return ""
-
 }
