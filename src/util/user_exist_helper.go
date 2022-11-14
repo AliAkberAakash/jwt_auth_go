@@ -2,8 +2,8 @@ package util
 
 import (
 	"fmt"
-	"jwt-auth/main/src/data"
-	"jwt-auth/main/src/dto"
+	"jwt-auth/src/data"
+	"jwt-auth/src/dto"
 )
 
 func GetUserFromDB(email string) (dto.User, error) {

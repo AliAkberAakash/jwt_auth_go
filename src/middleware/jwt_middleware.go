@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	"jwt-auth/main/src/service"
+	"jwt-auth/src/service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

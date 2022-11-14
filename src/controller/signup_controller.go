@@ -2,10 +2,10 @@ package controller
 
 import (
 	"fmt"
-	"jwt-auth/main/src/data"
-	"jwt-auth/main/src/dto"
-	"jwt-auth/main/src/service"
-	"jwt-auth/main/src/util"
+	"jwt-auth/src/data"
+	"jwt-auth/src/dto"
+	"jwt-auth/src/service"
+	"jwt-auth/src/util"
 
 	"github.com/gin-gonic/gin"
 )

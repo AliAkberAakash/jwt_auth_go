@@ -1,8 +1,8 @@
 package service
 
 import (
-	"jwt-auth/main/src/dto"
-	"jwt-auth/main/src/util"
+	"jwt-auth/src/dto"
+	"jwt-auth/src/util"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"

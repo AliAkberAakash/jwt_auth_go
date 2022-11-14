@@ -1,5 +1,5 @@
 package data
 
-import "jwt-auth/main/src/dto"
+import "jwt-auth/src/dto"
 
 var Users []dto.User

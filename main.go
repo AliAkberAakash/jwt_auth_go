@@ -1,9 +1,9 @@
 package main
 
 import (
-	"jwt-auth/main/src/controller"
-	"jwt-auth/main/src/handler"
-	"jwt-auth/main/src/service"
+	"jwt-auth/src/controller"
+	"jwt-auth/src/handler"
+	"jwt-auth/src/service"
 
 	"github.com/gin-gonic/gin"
 )

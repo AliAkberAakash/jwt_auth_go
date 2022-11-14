@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"jwt-auth/main/src/controller"
+	"jwt-auth/src/controller"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

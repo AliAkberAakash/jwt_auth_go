@@ -1,6 +1,6 @@
 package controller
 
-import "jwt-auth/main/src/dto"
+import "jwt-auth/src/dto"
 
 type UserController interface {
 	GetAllUsers() []dto.User
