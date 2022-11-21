@@ -14,13 +14,6 @@ func GetUserFromDB(email string, db *gorm.DB) (*dto.User, error) {
 
 	tx := db.Where("email = ?", email).First(&user)
 
-	// checks if there is any error
-	if tx.Error != nil {
-		log.Print(tx.Error.Error())
-		return user, tx.Error
-	}
-
-	// checks the count of query
 	var count int64
 	tx.Count(&count)
 
