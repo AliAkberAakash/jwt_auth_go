@@ -1,25 +1,36 @@
 package service
 
 import (
-	"jwt-auth/src/data"
+	"fmt"
 	"jwt-auth/src/dto"
+	"jwt-auth/src/util"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type SignupService interface {
-	Signup(user dto.User) bool
+	Signup(user dto.User) error
 }
 
-type signupInformation struct {
+type signupService struct {
+	DB *gorm.DB
 }
 
-func StaticSignupService() SignupService {
-	return &signupInformation{}
+func StaticSignupService(db *gorm.DB) SignupService {
+	return &signupService{
+		DB: db,
+	}
 }
 
-func (info *signupInformation) Signup(user dto.User) bool {
+func (info *signupService) Signup(user dto.User) error {
+
+	_, err := util.GetUserFromDB(user.Email, info.DB)
+
+	if err == nil {
+		return fmt.Errorf("User already exists with email %s", user.Email)
+	}
 
 	hashedPass := getHash([]byte(user.Password))
 
@@ -28,8 +39,9 @@ func (info *signupInformation) Signup(user dto.User) bool {
 		Password: hashedPass,
 	}
 
-	data.Users = append(data.Users, newUser)
-	return true
+	info.DB.Table("users").Create(&newUser)
+
+	return nil
 }
 
 func getHash(pwd []byte) string {

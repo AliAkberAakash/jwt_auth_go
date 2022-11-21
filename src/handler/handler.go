@@ -25,8 +25,8 @@ func LoginHandler(loginController controller.LoginController) gin.HandlerFunc {
 
 func SignUpHandler(signupController controller.SignupController) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		isUserCreated, err := signupController.Signup(ctx)
-		if err == nil && isUserCreated {
+		err := signupController.Signup(ctx)
+		if err == nil {
 			ctx.JSON(http.StatusOK, gin.H{
 				"message": "success",
 			})

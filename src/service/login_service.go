@@ -6,24 +6,28 @@ import (
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type LoginService interface {
 	IsUserValid(loginRequest dto.LoginRequest) (bool, error)
 }
 
-type loginService struct{}
-
-func StaticLoginService() LoginService {
-	return &loginService{}
+type loginService struct {
+	DB *gorm.DB
 }
 
-func (info *loginService) IsUserValid(loginRequest dto.LoginRequest) (bool, error) {
+func StaticLoginService(db *gorm.DB) LoginService {
+	return &loginService{
+		DB: db,
+	}
+}
 
-	foundUser, err := util.GetUserFromDB(loginRequest.Email)
+func (service *loginService) IsUserValid(loginRequest dto.LoginRequest) (bool, error) {
+
+	foundUser, err := util.GetUserFromDB(loginRequest.Email, service.DB)
 
 	if err != nil {
-		log.Println(err)
 		return false, err
 	}
 
