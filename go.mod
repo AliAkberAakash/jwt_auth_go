@@ -3,7 +3,6 @@ module jwt-auth
 go 1.18
 
 require (
-	github.com/cockroachdb/cockroach-go v2.0.1+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
