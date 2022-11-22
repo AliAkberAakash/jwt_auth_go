@@ -22,15 +22,17 @@ func main() {
 	var loginService service.LoginService = service.StaticLoginService(db)
 	var loginController controller.LoginController = controller.NewLoginController(loginService, jwtService)
 
-	var signupService service.SignupService = service.StaticSignupService(
-		db,
-	)
+	var signupService service.SignupService = service.StaticSignupService(db)
 	var signupController controller.SignupController = controller.NewSignupController(signupService)
+
+	var passwordResetService service.PasswordResetService = service.GetPasswordResetRequestService(db)
+	var passwordResetController controller.PasswordResetController = controller.GetPasswordResetController(passwordResetService)
 
 	server := gin.New()
 
 	server.POST("/login", handler.LoginHandler(loginController))
 	server.POST("/signup", handler.SignUpHandler(signupController))
+	server.POST("/forgot-password", handler.PasswordResetRequestHandler(passwordResetController))
 	//server.GET("/user", userHandler(signupController))
 
 	port := "8080"
