@@ -34,5 +34,10 @@ func InitStore() (*gorm.DB, error) {
 		log.Fatal(err)
 	}
 
+	err = DB.AutoMigrate(&dto.PasswordResetToken{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return DB, nil
 }
