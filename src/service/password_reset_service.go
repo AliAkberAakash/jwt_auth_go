@@ -31,8 +31,9 @@ func (service *passwordResetService) SendPasswordResetCode(email string) error {
 	}
 
 	token := generateToken()
+	hashedToken := util.GetHash([]byte(token))
 
-	err = saveTokenInDatabase(token, *foundUser, service.DB)
+	err = saveTokenInDatabase(hashedToken, *foundUser, service.DB)
 	if err != nil {
 		return err
 	}
@@ -74,6 +75,6 @@ func saveTokenInDatabase(token string, user dto.User, db *gorm.DB) error {
 }
 
 func sendTokenToEmail(token string, email string) error {
-	log.Print("Sending token to email")
+	log.Printf("Token: %s", token)
 	return nil
 }
