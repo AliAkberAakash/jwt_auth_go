@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"jwt-auth/src/dto"
 	"jwt-auth/src/util"
 	"log"
@@ -37,7 +38,7 @@ func (service *loginService) IsUserValid(loginRequest dto.LoginRequest) (bool, e
 	)
 	if passErr != nil {
 		log.Println(passErr)
-		return false, passErr
+		return false, fmt.Errorf("Invaid email or password")
 	}
 	return true, nil
 }

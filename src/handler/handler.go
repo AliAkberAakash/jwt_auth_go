@@ -38,12 +38,27 @@ func SignUpHandler(signupController controller.SignupController) gin.HandlerFunc
 	}
 }
 
-func PasswordResetRequestHandler(passwordResetController controller.PasswordResetController) gin.HandlerFunc {
+func ForgetPasswordHandler(passwordResetController controller.ResetPasswordController) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		err := passwordResetController.SendPasswordResetCode(ctx)
 		if err == nil {
 			ctx.JSON(http.StatusOK, gin.H{
 				"message": "success",
+			})
+		} else {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": err.Error(),
+			})
+		}
+	}
+}
+
+func ResetPasswordHandler(passwordResetController controller.ResetPasswordController) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		err := passwordResetController.ResetPassword(ctx)
+		if err == nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"message": "Password updated successfully",
 			})
 		} else {
 			ctx.JSON(http.StatusBadRequest, gin.H{

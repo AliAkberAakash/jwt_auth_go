@@ -22,8 +22,5 @@ func GetUserFromDB(email string, db *gorm.DB) (*dto.User, error) {
 		return user, fmt.Errorf("User not found")
 	}
 
-	log.Print(count)
-	log.Print(user)
-
 	return user, nil
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"jwt-auth/src/dto"
 	"jwt-auth/src/util"
 	"log"
@@ -9,21 +10,22 @@ import (
 	"gorm.io/gorm"
 )
 
-type PasswordResetService interface {
-	SendPasswordResetCode(email string) error
+type ResetPasswordService interface {
+	SendResetPasswordCode(email string) error
+	ResetPassword(request dto.ResetPasswordRequest) error
 }
 
-type passwordResetService struct {
+type resetPasswordService struct {
 	DB *gorm.DB
 }
 
-func GetPasswordResetRequestService(db *gorm.DB) PasswordResetService {
-	return &passwordResetService{
+func GetPasswordResetRequestService(db *gorm.DB) ResetPasswordService {
+	return &resetPasswordService{
 		DB: db,
 	}
 }
 
-func (service *passwordResetService) SendPasswordResetCode(email string) error {
+func (service *resetPasswordService) SendResetPasswordCode(email string) error {
 
 	foundUser, err := util.GetUserFromDB(email, service.DB)
 	if err != nil {
@@ -31,7 +33,7 @@ func (service *passwordResetService) SendPasswordResetCode(email string) error {
 	}
 
 	token := generateToken()
-	hashedToken := util.GetHash([]byte(token))
+	hashedToken := token //util.GetHash([]byte(token))
 
 	err = saveTokenInDatabase(hashedToken, *foundUser, service.DB)
 	if err != nil {
@@ -76,5 +78,30 @@ func saveTokenInDatabase(token string, user dto.User, db *gorm.DB) error {
 
 func sendTokenToEmail(token string, email string) error {
 	log.Printf("Token: %s", token)
+	return nil
+}
+
+func (service *resetPasswordService) ResetPassword(request dto.ResetPasswordRequest) error {
+
+	hashedToken := request.Token //util.GetHash([]byte(request.Token))
+	var existingData dto.PasswordResetToken
+	result := service.DB.Table("password_reset_tokens").Where("token = ?", hashedToken).First(&existingData)
+
+	var count int64
+	result.Count(&count)
+
+	if count == 0 {
+		return fmt.Errorf("Invalid token")
+	}
+
+	hashedPassword := util.GetHash([]byte(request.Password))
+
+	result = service.DB.Table("users").Where("ID = ?", existingData.UserID).Update("password", hashedPassword)
+
+	if result.Error != nil {
+		log.Print(result.Error)
+		return fmt.Errorf("Failed to update password")
+	}
+
 	return nil
 }
