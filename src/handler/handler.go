@@ -28,7 +28,7 @@ func SignUpHandler(signupController controller.SignupController) gin.HandlerFunc
 		err := signupController.Signup(ctx)
 		if err == nil {
 			ctx.JSON(http.StatusOK, gin.H{
-				"message": "Password reset code sent to email succeessfully",
+				"message": "success",
 			})
 		} else {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -43,7 +43,7 @@ func ForgetPasswordHandler(passwordResetController controller.ResetPasswordContr
 		err := passwordResetController.SendPasswordResetCode(ctx)
 		if err == nil {
 			ctx.JSON(http.StatusOK, gin.H{
-				"message": "success",
+				"message": "Password reset code sent to email succeessfully",
 			})
 		} else {
 			ctx.JSON(http.StatusBadRequest, gin.H{

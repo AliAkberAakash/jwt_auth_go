@@ -7,6 +7,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"gorm.io/gorm"
 )
 
@@ -40,7 +42,7 @@ func (service *resetPasswordService) SendResetPasswordCode(email string) error {
 		return err
 	}
 
-	err = sendTokenToEmail(token, email)
+	err = sendTokenToEmail(token, *foundUser)
 	if err != nil {
 		return err
 	}
@@ -76,8 +78,24 @@ func saveTokenInDatabase(token string, user dto.User, db *gorm.DB) error {
 	return nil
 }
 
-func sendTokenToEmail(token string, email string) error {
-	log.Printf("Token: %s", token)
+func sendTokenToEmail(token string, user dto.User) error {
+	from := mail.NewEmail("Hatil", "cyberwortsoftwares@gmail.com")
+	subject := "Hatil Password Reset Token"
+	to := mail.NewEmail(user.Email, user.Email)
+	plainTextContent := "Your passwrd reset token is "
+	htmlContent := "<strong>" + token + "</strong>"
+	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+
+	api_key := util.GetEnvVariable("SENDGRID_API_KEY")
+	client := sendgrid.NewSendClient(api_key)
+	response, err := client.Send(message)
+	if err != nil {
+		log.Println(err)
+	} else {
+		fmt.Println(response.StatusCode)
+		fmt.Println(response.Body)
+		fmt.Println(response.Headers)
+	}
 	return nil
 }
 
