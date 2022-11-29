@@ -5,6 +5,7 @@ import (
 	"jwt-auth/src/dto"
 	"jwt-auth/src/util"
 	"log"
+	"os"
 	"time"
 
 	"github.com/sendgrid/sendgrid-go"
@@ -86,7 +87,7 @@ func sendTokenToEmail(token string, user dto.User) error {
 	htmlContent := "<strong>" + token + "</strong>"
 	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
 
-	api_key := util.GetEnvVariable("SENDGRID_API_KEY")
+	api_key := os.Getenv("SENDGRID_API_KEY")
 	client := sendgrid.NewSendClient(api_key)
 	response, err := client.Send(message)
 	if err != nil {
