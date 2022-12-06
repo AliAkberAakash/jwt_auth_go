@@ -18,6 +18,7 @@ services:
       - PGHOST=${PGHOST:-db}
       - PGPORT=${PGPORT:-26257}
       - PGDATABASE=${PGDATABASE:-mydb}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
     deploy:
       restart_policy:
         condition: on-failure

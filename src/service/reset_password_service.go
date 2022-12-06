@@ -38,7 +38,7 @@ func (service *resetPasswordService) SendResetPasswordCode(email string) error {
 	token := generateToken()
 	hashedToken := token //util.GetHash([]byte(token))
 
-	err = saveTokenInDatabase(hashedToken, *foundUser, service.DB)
+	err = saveTokenInDatabase(hashedToken, foundUser.ID, service.DB)
 	if err != nil {
 		return err
 	}
@@ -51,12 +51,12 @@ func (service *resetPasswordService) SendResetPasswordCode(email string) error {
 	return nil
 }
 
-func saveTokenInDatabase(token string, user dto.User, db *gorm.DB) error {
+func saveTokenInDatabase(token string, uid uint, db *gorm.DB) error {
 	validity := time.Now().Add(time.Minute * 15)
 
 	// check if entry for user already exists
 	var existingData dto.PasswordResetToken
-	result := db.Where("user_id = ?", user.ID).First(&existingData)
+	result := db.Where("user_id = ?", uid).First(&existingData)
 	var count int64
 	result.Count(&count)
 
@@ -65,7 +65,7 @@ func saveTokenInDatabase(token string, user dto.User, db *gorm.DB) error {
 	// else update previous
 	if count == 0 {
 		resetTokenData := &dto.PasswordResetToken{
-			UserID:    user.ID,
+			UserID:    uid,
 			Token:     token,
 			ExpiresAt: validity,
 		}
@@ -113,10 +113,19 @@ func (service *resetPasswordService) ResetPassword(request dto.ResetPasswordRequ
 		return fmt.Errorf("Invalid token")
 	}
 
+	if existingData.ExpiresAt.Before(time.Now()) {
+		return fmt.Errorf("Token has expired")
+	}
+
+	// replace the old token
+	token := generateToken()
+	err := saveTokenInDatabase(token, existingData.UserID, service.DB)
+	if err != nil {
+		return err
+	}
+
 	hashedPassword := util.GetHash([]byte(request.Password))
-
 	result = service.DB.Table("users").Where("ID = ?", existingData.UserID).Update("password", hashedPassword)
-
 	if result.Error != nil {
 		log.Print(result.Error)
 		return fmt.Errorf("Failed to update password")
